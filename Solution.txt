@@ -1,0 +1,163 @@
+import java.util.*;
+
+
+
+class Truck {
+
+int id;
+
+int capacity;
+
+int currentCharge;
+
+
+
+Truck(int id, int capacity, int currentCharge) {
+
+this.id = id;
+
+this.capacity = capacity;
+
+this.currentCharge = currentCharge;
+
+}
+
+}
+
+
+
+class Charger {
+
+int id;
+
+int rate;
+
+
+
+Charger(int id, int rate) {
+
+this.id = id;
+
+this.rate = rate;
+
+}
+
+}
+
+
+
+public class ChargingSchedule {
+
+
+
+public static void main(String[] args) {
+
+Scanner scanner = new Scanner(System.in);
+
+
+System.out.print("Enter Number of Trucks: ");
+int numTrucks = scanner.nextInt();
+
+System.out.print("Enter Number of Chargers: ");
+int numChargers = scanner.nextInt();
+
+System.out.print("Enter Total Time: ");
+int totalTime = scanner.nextInt();
+
+
+System.out.println("Enter Configarution of Trucks: ");
+
+List<Truck> trucks = new ArrayList<>();
+
+for (int i = 0; i < numTrucks; i++) {
+System.out.print("Enter Id of truck: ");
+int id = scanner.nextInt();
+
+System.out.print("Enter Capacity of Trucks: ");
+int capacity = scanner.nextInt();
+
+System.out.print("Enter Current Charge of Truck: ");
+int currentCharge = scanner.nextInt();
+
+trucks.add(new Truck(id, capacity, currentCharge));
+}
+
+
+System.out.println("Enter Configuration of Chargers: ");
+List<Charger> chargers = new ArrayList<>();
+for (int i = 0; i < numChargers; i++) {
+
+System.out.print("Enter Id of Charger: ");
+int id = scanner.nextInt();
+System.out.print("Enter Rate of Charger: ");
+int rate = scanner.nextInt();
+
+chargers.add(new Charger(id, rate));
+}
+
+
+
+// Sort chargers by rate in descending order
+chargers.sort((a, b) -> Integer.compare(b.rate, a.rate));
+
+int fastestChargerRate = chargers.get(0).rate;
+
+// Sort trucks based on the remaining charge needed divided by the rate of the fastest charger
+
+trucks.sort((a, b) -> Double.compare((double)(a.capacity - a.currentCharge) / fastestChargerRate,
+
+(double)(b.capacity - b.currentCharge) / fastestChargerRate));
+
+
+
+List<List<Integer>> schedule = new ArrayList<>(numChargers);
+
+for (int i = 0; i < numChargers; i++) {
+
+schedule.add(new ArrayList<>());
+
+}
+
+
+
+for (Truck truck : trucks) {
+
+for (Charger charger : chargers) {
+
+int requiredCharge = truck.capacity - truck.currentCharge;
+int chargeTime = requiredCharge / charger.rate;
+
+if (chargeTime <= totalTime) {
+schedule.get(charger.id-1).add(truck.id);
+totalTime -= chargeTime;
+break;
+}
+
+}
+
+}
+
+
+
+for (int i = 0; i < numChargers; i++) {
+
+// System.out.print(chargers.get(i).id + ": ");
+System.out.print((i+1)+": ");
+
+for (int truckId : schedule.get(i)) {
+
+System.out.print(truckId + " ");
+
+}
+
+System.out.println();
+
+}
+
+
+
+scanner.close();
+
+}
+
+}
